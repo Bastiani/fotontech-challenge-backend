@@ -1,9 +1,10 @@
 import {
   GraphQLObjectType,
   GraphQLNonNull,
-  GraphQLID,
   GraphQLBoolean,
+  GraphQLString,
 } from 'graphql';
+import { globalIdField } from 'graphql-relay';
 
 import { connectionDefinitions } from '../../graphql/connection/customConnection';
 import { registerType, nodeInterface } from '../../interface/Node';
@@ -13,13 +14,22 @@ const ProductType = registerType(
     name: 'Product',
     description: 'Product type definition',
     fields: () => ({
-      id: {
-        type: new GraphQLNonNull(GraphQLID),
-        description: 'ID of the user',
+      id: globalIdField('Product'),
+      _id: {
+        type: GraphQLNonNull(GraphQLString),
+        resolve: product => product._id,
+      },
+      title: {
+        type: GraphQLString,
+        description: 'Title of the product',
+      },
+      description: {
+        type: GraphQLString,
+        description: 'Title of the product',
       },
       active: {
         type: GraphQLBoolean,
-        description: 'Active of the user',
+        description: 'Active of the product',
       },
     }),
     interfaces: () => [nodeInterface],
@@ -28,7 +38,7 @@ const ProductType = registerType(
 
 export const ProductConnection = connectionDefinitions({
   name: 'Product',
-  nodeType: GraphQLNonNull(ProductType),
+  nodeType: ProductType,
 });
 
 export default ProductType;

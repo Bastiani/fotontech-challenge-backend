@@ -7,12 +7,8 @@ import {
 
 import UserModel from './UserModel';
 
-type Args = {
-  search: string
-};
-
 export default class User {
-  constructor(data: UserFlowType) {
+  constructor(data) {
     this.id = data.id;
     this._id = data._id;
     this.name = data.name;
@@ -26,10 +22,7 @@ export const getLoader = () => new DataLoader(ids => mongooseLoader(UserModel, i
 
 const viewerCanSee = (context, data) => true;
 
-export const load = async (
-  context: GraphQLContext,
-  id: string,
-): Promise<?User> => {
+export const load = async (context, id): Promise<?User> => {
   if (!id) {
     return null;
   }
@@ -43,12 +36,9 @@ export const load = async (
   return viewerCanSee(context, data) ? new User(data) : null;
 };
 
-export const clearCache = ({ dataloaders }: GraphQLContext, id: string) => dataloaders.UserLoader.clear(id.toString());
+export const clearCache = ({ dataloaders }, id) => dataloaders.UserLoader.clear(id.toString());
 
-export const loadUsers = async (
-  context: GraphQLContext,
-  args: ConnectionArguments & Args,
-) => {
+export const loadUsers = async (context, args) => {
   const { user } = context;
   if (!user) throw new Error('Unauthorized user');
   const { search } = args;

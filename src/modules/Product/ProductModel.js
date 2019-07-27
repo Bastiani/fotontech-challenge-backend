@@ -2,6 +2,14 @@ import mongoose from 'mongoose';
 
 const Schema = new mongoose.Schema(
   {
+    title: {
+      type: String,
+      trim: true,
+    },
+    description: {
+      type: String,
+      trim: true,
+    },
     active: {
       type: Boolean,
       default: true,

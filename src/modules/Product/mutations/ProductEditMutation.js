@@ -1,11 +1,16 @@
-import { GraphQLString, GraphQLNonNull, GraphQLID } from 'graphql';
+import {
+  GraphQLString,
+  GraphQLNonNull,
+  GraphQLID,
+  GraphQLBoolean,
+} from 'graphql';
 import { fromGlobalId, mutationWithClientMutationId } from 'graphql-relay';
 
-import * as ProductLoader from '../ProductLoader';
+import Product, * as ProductLoader from '../ProductLoader';
 import ProductType from '../ProductType';
 import ProductModel from '../ProductModel';
 
-import ProductFieldsType from '../ProductFieldsType';
+import { removeEmptyFields } from '../../../utils/removeEmptyFields';
 
 const mutation = mutationWithClientMutationId({
   name: 'ProductEdit',
@@ -13,10 +18,19 @@ const mutation = mutationWithClientMutationId({
     id: {
       type: GraphQLNonNull(GraphQLID),
     },
-    ...ProductFieldsType,
+    title: {
+      type: GraphQLNonNull(GraphQLString),
+    },
+    description: {
+      type: GraphQLNonNull(GraphQLString),
+    },
+    active: {
+      type: GraphQLBoolean,
+    },
   },
   mutateAndGetPayload: async (args, context) => {
-    const { id, active } = args;
+    // eslint-disable-next-line
+    const { id, title, description, active } = args;
 
     const product = await ProductModel.findOne({
       _id: fromGlobalId(id).id,
@@ -29,8 +43,13 @@ const mutation = mutationWithClientMutationId({
       };
     }
 
+    const payload = await removeEmptyFields({
+      title,
+      description,
+    });
+
     // Edit record
-    await product.update({ active });
+    await product.update(payload);
 
     // Clear dataloader cache
     ProductLoader.clearCache(context, product._id);
@@ -44,13 +63,13 @@ const mutation = mutationWithClientMutationId({
     product: {
       type: ProductType,
       resolve: async ({ id }, args, context) => {
-        const newProduct = await ProductLoader.load(context, id);
+        const product = await ProductLoader.load(context, id);
 
-        if (!newProduct) {
+        if (!product) {
           return null;
         }
 
-        return newProduct;
+        return product;
       },
     },
     error: {
