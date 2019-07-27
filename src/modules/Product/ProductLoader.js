@@ -10,6 +10,9 @@ export default class Product {
   constructor(data) {
     this.id = data.id;
     this._id = data._id;
+    this.title = data.title;
+    this.description = data.description;
+    this.active = data.active;
   }
 }
 
@@ -34,17 +37,19 @@ export const load = async (context, id) => {
 export const clearCache = ({ dataloaders }, id) => dataloaders.ProductLoader.clear(id.toString());
 
 export const loadProducts = async (context, args) => {
-  const { user } = context;
-  if (!user) throw new Error('Unauthorized user');
-  // const { search } = args;
-  // const conditions = {
-  //   ...(search != null ? { name: { $regex: new RegExp(args.search, 'ig') } } : {}),
-  // };
+  // const { user } = context;
+  // if (!user) throw new Error('Unauthorized user');
+  const { search } = args;
+  const conditions = {
+    ...(search != null
+      ? { title: { $regex: new RegExp(args.search, 'ig') } }
+      : {}),
+  };
 
-  // const products = ProductModel.find(conditions).sort({ createdAt: -1 });
+  const products = ProductModel.find(conditions).sort({ createdAt: -1 });
 
   return connectionFromMongoCursor({
-    // cursor: products,
+    cursor: products,
     context,
     args,
     loader: load,
