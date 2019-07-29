@@ -4,6 +4,10 @@ ref. [Entria Boilerplate](https://github.com/entria/graphql-dataloader-boilerpla
 
 My boilerplate for start NodeJS/Koa with Jest/Babel/ESLint/GraphQL/Auth/Typescript
 
+## RUN
+- `yarn`
+- `yarn dev`
+
 ## Notes
 
 - More info about GraphQL and Relay [graphql-blog](https://github.com/Bastiani/graphql-blog)
