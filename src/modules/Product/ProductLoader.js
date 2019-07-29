@@ -42,8 +42,8 @@ export const loadProducts = async (context, args) => {
   const { search } = args;
   const conditions = {
     ...(search != null
-      ? { title: { $regex: new RegExp(args.search, 'ig') } }
-      : {}),
+      ? { title: { $regex: new RegExp(args.search, 'ig') }, active: true }
+      : { active: true }),
   };
 
   const products = ProductModel.find(conditions).sort({ createdAt: -1 });

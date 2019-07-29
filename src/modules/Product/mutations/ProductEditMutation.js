@@ -44,8 +44,10 @@ const mutation = mutationWithClientMutationId({
     }
 
     const payload = await removeEmptyFields({
+      id,
       title,
       description,
+      active,
     });
 
     // Edit record

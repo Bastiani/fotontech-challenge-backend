@@ -4,7 +4,7 @@ import {
   GraphQLNonNull,
   GraphQLString,
 } from 'graphql';
-import { connectionArgs } from 'graphql-relay';
+import { connectionArgs, fromGlobalId } from 'graphql-relay';
 
 import UserType, { UserConnection } from '../modules/User/UserType';
 import ProductType, { ProductConnection } from '../modules/Product/ProductType';
@@ -41,7 +41,7 @@ export default new GraphQLObjectType({
           type: GraphQLNonNull(GraphQLID),
         },
       },
-      resolve: async (root, { id }, context) => ProductLoader.load(context, id),
+      resolve: async (root, { id }, context) => ProductLoader.load(context, fromGlobalId(id).id),
     },
     products: {
       type: ProductConnection.connectionType,
